@@ -1,0 +1,3 @@
+[submodule "vendor/ibex"]
+	path = vendor/ibex
+	url = https://github.com/lowRISC/ibex.git
