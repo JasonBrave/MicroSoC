@@ -8,7 +8,6 @@ module processor_block(input logic		  clk,
 	logic						  instr_rvalid;
 	logic [31:0]				  instr_addr;
 	logic [31:0]				  instr_rdata;
-	logic [6:0]					  instr_rdata_intg;
 	logic						  instr_err;
 
 	logic						  data_req;
@@ -18,9 +17,7 @@ module processor_block(input logic		  clk,
 	logic [3:0]					  data_be;
 	logic [31:0]				  data_addr;
 	logic [31:0]				  data_wdata;
-	logic [6:0]					  data_wdata_intg;
 	logic [31:0]				  data_rdata;
-	logic [6:0]					  data_rdata_intg;
 	logic						  data_err;
 	
 	riscv_core_wrapper u_riscv_core_wrapper(/*AUTOINST*/
@@ -32,19 +29,16 @@ module processor_block(input logic		  clk,
 											.data_be_o			(data_be[3:0]),
 											.data_addr_o		(data_addr[31:0]),
 											.data_wdata_o		(data_wdata[31:0]),
-											.data_wdata_intg_o	(data_wdata_intg[6:0]),
 											// Inputs
 											.clk				(clk),
 											.rst				(rst),
 											.instr_gnt_i		(instr_gnt),
 											.instr_rvalid_i		(instr_rvalid),
 											.instr_rdata_i		(instr_rdata[31:0]),
-											.instr_rdata_intg_i	(instr_rdata_intg[6:0]),
 											.instr_err_i		(instr_err),
 											.data_gnt_i			(data_gnt),
 											.data_rvalid_i		(data_rvalid),
 											.data_rdata_i		(data_rdata[31:0]),
-											.data_rdata_intg_i	(data_rdata_intg[6:0]),
 											.data_err_i			(data_err));
 	
 	bootrom u_bootrom(/*AUTOINST*/
@@ -52,7 +46,6 @@ module processor_block(input logic		  clk,
 					  .instr_gnt_o		(instr_gnt),
 					  .instr_rvalid_o	(instr_rvalid),
 					  .instr_rdata_o	(instr_rdata[31:0]),
-					  .instr_rdata_intg_o(instr_rdata_intg[6:0]),
 					  .instr_err_o		(instr_err),
 					  // Inputs
 					  .clk				(clk),
@@ -60,20 +53,18 @@ module processor_block(input logic		  clk,
 					  .instr_req_i		(instr_req),
 					  .instr_addr_i		(instr_addr[31:0]));
 
-	debugport_controller dp_c(
-							  .clk (clk),
-							  .rst (rst),
-							  .data_req			(data_req),
-							  .data_we			(data_we),
-							  .data_be			(data_be[3:0]),
-							  .data_addr		(data_addr[31:0]),
-							  .data_wdata		(data_wdata[31:0]),
-							  .data_wdata_intg	(data_wdata_intg[6:0]),
-							  .data_gnt			(data_gnt),
-							  .data_rvalid		(data_rvalid),
-							  .data_rdata		(data_rdata[31:0]),
-							  .data_rdata_intg	(data_rdata_intg[6:0]),
-							  .data_err			(data_err),
-							  .debugport (debugport));
+	debugport_controller u_debugport_controller(
+												.clk (clk),
+												.rst (rst),
+												.data_req			(data_req),
+												.data_we			(data_we),
+												.data_be			(data_be[3:0]),
+												.data_addr		(data_addr[31:0]),
+												.data_wdata		(data_wdata[31:0]),
+												.data_gnt			(data_gnt),
+												.data_rvalid		(data_rvalid),
+												.data_rdata		(data_rdata[31:0]),
+												.data_err			(data_err),
+												.debugport (debugport));
 	
 endmodule // processor_block
