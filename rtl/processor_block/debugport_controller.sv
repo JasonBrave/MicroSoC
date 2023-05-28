@@ -21,7 +21,7 @@ module debugport_controller(input logic			clk,
 		gnt_next = data_req && ~data_gnt;
 	end
 
-	always @(posedge clk or negedge rst) begin
+	always @(posedge clk) begin
 		if(rst == 1'b0) begin
 			data_rdata <= 32'h00000000;
 			data_gnt <= 1'b0;

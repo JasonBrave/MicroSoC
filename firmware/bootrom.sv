@@ -10,7 +10,7 @@ module bootrom(
 			   output logic		   instr_err_o);
 	logic [31:0] rdata_next;
 	logic		 rvalid_next;
-	always_ff @(posedge clk, negedge rst) begin
+	always_ff @(posedge clk) begin
 		if(rst == 1'b0) begin
 			instr_rdata_o <= 32'h0000000;
 			instr_rvalid_o <= 1'b0;
