@@ -4,21 +4,10 @@
 .skip 0x80, 0x0
 
 _start:
-	mv a0,x0
-	mv a1,x0
-	li a2,1
-	mv a3,x0
-	li a4,100
+	mv a0, x0
+	li a1, 0x1000
+	mv a2, x0
 _loop:
-	add a1,a1,a2
-	add a0,a0,a1
-	addi a3,a3,1
-	bgtu a4,a3,_loop
-_csrtest:
-	csrr a0,mvendorid
-	csrr a1,marchid
-	csrr a2,mimpid
-	csrr a3,mhartid
-	csrr a4,mconfigptr
-_end:
-	j _end
+	sb a0, 4(a1)
+	addi a0,a0,1
+	j _loop
