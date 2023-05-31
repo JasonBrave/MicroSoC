@@ -31,7 +31,7 @@ module riscv_core_wrapper(input logic		  clk,
 			   .ENABLE_MUL(1),
 			   .ENABLE_DIV(1),
 			   .PROGADDR_RESET(32'h00000080),
-			   .PROGADDR_IRQ(32'h00000000),
+			   .PROGADDR_IRQ(32'h00000000)
 			   ) u_picorv32 (
 							 .clk         (clk),
 							 .resetn      (rst),
@@ -62,6 +62,11 @@ module riscv_core_wrapper(input logic		  clk,
 					instr_addr_o = mem_addr;
 					mem_ready = instr_rvalid_i;
 					mem_rdata = instr_rdata_i;
+				end else begin
+					data_req_o = 1'b1;
+					data_addr_o = mem_addr;
+					mem_ready = data_rvalid_i;
+					mem_rdata = data_rdata_i;
 				end
 			end else begin
 				if(mem_instr == 1'b0) begin
