@@ -54,12 +54,14 @@ module bootrom(
 			32'h00000074: rdata_next = 32'h00000000;
 			32'h00000078: rdata_next = 32'h00000000;
 			32'h0000007c: rdata_next = 32'h00000000;
-			32'h00000080: rdata_next = 32'h00000513;
-			32'h00000084: rdata_next = 32'h000015b7;
-			32'h00000088: rdata_next = 32'h00a58223;
-			32'h0000008c: rdata_next = 32'h00150513;
-			32'h00000090: rdata_next = 32'hff9ff06f;
-			32'h00000094: rdata_next = 32'hff9ff06f;
+			32'h00000080: rdata_next = 32'h000015b7;
+			32'h00000084: rdata_next = 32'h00002637;
+			32'h00000088: rdata_next = 32'h00058503;
+			32'h0000008c: rdata_next = 32'h00a58223;
+			32'h00000090: rdata_next = 32'h00a62423;
+			32'h00000094: rdata_next = 32'h00150513;
+			32'h00000098: rdata_next = 32'hff5ff06f;
+			32'h0000009c: rdata_next = 32'hff5ff06f;
 		endcase // case (instr_addr_i)
 		
 		// address decoder

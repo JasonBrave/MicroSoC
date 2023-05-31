@@ -8,6 +8,7 @@ int main() {
 	Verilated::traceEverOn(true);
 
 	Vmicrosoc_top microsoc;
+	microsoc.gpio_in = 0x30;
 	microsoc.rst = 1;
 	microsoc.clk = 0;
 	microsoc.eval();
@@ -32,7 +33,7 @@ int main() {
 		microsoc.clk = 1;
 		microsoc.eval();
 		Verilated::timeInc(1);
-		std::cout << std::hex << std::setfill('0') << std::setw(2)
-				  << (int)microsoc.debugport << std::endl;
+		std::cout << std::dec << t << ' ' << std::hex << std::setfill('0')
+				  << std::setw(4) << (int)microsoc.gpio_out << std::endl;
 	}
 }

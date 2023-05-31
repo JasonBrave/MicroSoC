@@ -1,6 +1,6 @@
 SV_INC = -Ivendor/ibex/vendor/picorv32
-SV_SRC = rtl/microsoc_top.sv rtl/processor_block/processor_block.sv rtl/processor_block/riscv_core_wrapper.sv firmware/bootrom.sv vendor/picorv32/picorv32.v rtl/peripheral_block/peripheral_block.sv rtl/peripheral_block/gpio_controller.sv
-VERILATOR_ARGS = -Wno-UNUSEDPARAM -Wno-PINCONNECTEMPTY -Wno-PINMISSING -Wno-UNUSEDSIGNAL
+SV_SRC = rtl/microsoc_top.sv rtl/processor_block/processor_block.sv rtl/processor_block/riscv_core_wrapper.sv firmware/bootrom.sv vendor/picorv32/picorv32.v rtl/peripheral_block/peripheral_block.sv rtl/peripheral_block/gpio_controller.sv rtl/peripheral_block/ram.sv
+VERILATOR_ARGS = -Wno-UNUSEDPARAM -Wno-PINCONNECTEMPTY -Wno-PINMISSING -Wno-UNUSEDSIGNAL --trace-max-array 10000
 TB_SRC = tb/verilator/main.cpp
 VERILATOR = verilator
 

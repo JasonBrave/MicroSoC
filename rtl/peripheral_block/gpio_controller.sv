@@ -8,7 +8,6 @@ module gpio_controller(input logic		   clk,
 					   output logic		   data_gnt,
 					   output logic		   data_rvalid,
 					   output logic [31:0] data_rdata,
-					   output logic		   data_err,
 					   output logic [17:0] gpio_out,
 					   input logic [11:0]  gpio_in);
 
@@ -59,7 +58,5 @@ module gpio_controller(input logic		   clk,
 			end
 		end
 	end
-
-	assign data_err = 1'b0;
 	
 endmodule // debugport_controller
