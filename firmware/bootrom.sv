@@ -20,52 +20,37 @@ module bootrom(
 		end
 	end
 	always_comb begin
-		rdata_next = 32'h12345678;
-		unique case (instr_addr_i)
-			32'h00000000: rdata_next = 32'h00000000;
-			32'h00000004: rdata_next = 32'h00000000;
-			32'h00000008: rdata_next = 32'h00000000;
-			32'h0000000c: rdata_next = 32'h00000000;
-			32'h00000010: rdata_next = 32'h00000000;
-			32'h00000014: rdata_next = 32'h00000000;
-			32'h00000018: rdata_next = 32'h00000000;
-			32'h0000001c: rdata_next = 32'h00000000;
-			32'h00000020: rdata_next = 32'h00000000;
-			32'h00000024: rdata_next = 32'h00000000;
-			32'h00000028: rdata_next = 32'h00000000;
-			32'h0000002c: rdata_next = 32'h00000000;
-			32'h00000030: rdata_next = 32'h00000000;
-			32'h00000034: rdata_next = 32'h00000000;
-			32'h00000038: rdata_next = 32'h00000000;
-			32'h0000003c: rdata_next = 32'h00000000;
-			32'h00000040: rdata_next = 32'h00000000;
-			32'h00000044: rdata_next = 32'h00000000;
-			32'h00000048: rdata_next = 32'h00000000;
-			32'h0000004c: rdata_next = 32'h00000000;
-			32'h00000050: rdata_next = 32'h00000000;
-			32'h00000054: rdata_next = 32'h00000000;
-			32'h00000058: rdata_next = 32'h00000000;
-			32'h0000005c: rdata_next = 32'h00000000;
-			32'h00000060: rdata_next = 32'h00000000;
-			32'h00000064: rdata_next = 32'h00000000;
-			32'h00000068: rdata_next = 32'h00000000;
-			32'h0000006c: rdata_next = 32'h00000000;
-			32'h00000070: rdata_next = 32'h00000000;
-			32'h00000074: rdata_next = 32'h00000000;
-			32'h00000078: rdata_next = 32'h00000000;
-			32'h0000007c: rdata_next = 32'h00000000;
-			32'h00000080: rdata_next = 32'h000015b7;
-			32'h00000084: rdata_next = 32'h00002637;
-			32'h00000088: rdata_next = 32'h00058503;
-			32'h0000008c: rdata_next = 32'h00a58223;
-			32'h00000090: rdata_next = 32'h00a62423;
-			32'h00000094: rdata_next = 32'h00150513;
-			32'h00000098: rdata_next = 32'hff5ff06f;
-			32'h0000009c: rdata_next = 32'hff5ff06f;
+		unique case (instr_addr_i[15:2])
+			14'h020: rdata_next = 32'h00018137;
+			14'h021: rdata_next = 32'h0280006f;
+			14'h022: rdata_next = 32'h03200793;
+			14'h023: rdata_next = 32'h00100713;
+			14'h024: rdata_next = 32'h02f50533;
+			14'h025: rdata_next = 32'h000217b7;
+			14'h026: rdata_next = 32'h00e7a223;
+			14'h027: rdata_next = 32'h00021737;
+			14'h028: rdata_next = 32'h00072783;
+			14'h029: rdata_next = 32'hfea7eee3;
+			14'h02a: rdata_next = 32'h00008067;
+			14'h02b: rdata_next = 32'h00000613;
+			14'h02c: rdata_next = 32'h00021737;
+			14'h02d: rdata_next = 32'h00100513;
+			14'h02e: rdata_next = 32'h1f300693;
+			14'h02f: rdata_next = 32'h000205b7;
+			14'h030: rdata_next = 32'h00a72223;
+			14'h031: rdata_next = 32'h00072783;
+			14'h032: rdata_next = 32'hfef6fee3;
+			14'h033: rdata_next = 32'h00160613;
+			14'h034: rdata_next = 32'h00c5a223;
+			14'h035: rdata_next = 32'hfedff06f;
+			14'h036: rdata_next = 32'h00021000;
+			14'h037: rdata_next = 32'h00020000;
+			14'h038: rdata_next = 32'h00020000;
+			default: rdata_next = 32'h00000000;
 		endcase // case (instr_addr_i)
 		
 		// address decoder
-		instr_gnt_o  = instr_req_i && (instr_addr_i[31:8] == 24'h00000);
+		instr_gnt_o  = instr_req_i && (instr_addr_i[31:16] == 16'h0000);
 
 		// valid driving logic
 		rvalid_next = instr_gnt_o;
