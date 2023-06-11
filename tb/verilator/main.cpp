@@ -26,7 +26,7 @@ int main() {
 		Verilated::timeInc(1);
 	}
 	microsoc.rst = 1;
-	for (volatile unsigned long long t = 0; t < 2000; t++) {
+	for (volatile unsigned long long t = 0; t < 30000; t++) {
 		microsoc.clk = 0;
 		microsoc.eval();
 		Verilated::timeInc(1);
