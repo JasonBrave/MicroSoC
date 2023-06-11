@@ -16,7 +16,7 @@ module gpio_controller(input logic		   clk,
 	logic		 rvalid_next;
 
 	always_comb begin
-		decode = (data_addr[31:12] == 20'h00001);
+		decode = (data_addr[31:12] == 20'h00020);
 		gnt_next = data_req && ~data_gnt && decode;
 		rvalid_next = data_gnt;
 	end

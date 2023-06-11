@@ -57,7 +57,7 @@ module riscv_core_wrapper(input logic		  clk,
 		mem_rdata = 32'h00000000;
 		if(mem_valid == 1'b1) begin
 			if(mem_wstrb == 4'b0000) begin
-				if(mem_instr == 1'b1) begin
+				if((mem_instr == 1'b1) || (mem_addr[31:12] == 20'h00000)) begin
 					instr_req_o = 1'b1;
 					instr_addr_o = mem_addr;
 					mem_ready = instr_rvalid_i;

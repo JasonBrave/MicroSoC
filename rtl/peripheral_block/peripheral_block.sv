@@ -12,9 +12,9 @@ module peripheral_block(input logic			clk,
 						output logic [17:0]	gpio_out,
 						input logic [11:0]	gpio_in);
 
-	logic gpio_gnt, ram_gnt;
-	logic gpio_rvalid, ram_rvalid;
-	logic [31:0] gpio_rdata, ram_rdata;
+	logic gpio_gnt, ram_gnt, timer32_gnt;
+	logic gpio_rvalid, ram_rvalid, timer32_rvalid;
+	logic [31:0] gpio_rdata, ram_rdata, timer32_rdata;
 	logic [1:0]	 arb_ctrl;
 
 	always_ff @(posedge clk) begin
@@ -25,12 +25,14 @@ module peripheral_block(input logic			clk,
 				arb_ctrl <= 2'b10;
 			end else if(ram_gnt == 1'b1) begin
 				arb_ctrl <= 2'b01;
+			end else if(timer32_gnt == 1'b1) begin
+				arb_ctrl <= 2'b11;
 			end
 		end
 	end	
 
 	always_comb begin
-		data_gnt = gpio_gnt | ram_gnt;
+		data_gnt = gpio_gnt | ram_gnt | timer32_gnt;
 		
 		if(arb_ctrl == 2'b10) begin
 			data_rvalid = gpio_rvalid;
@@ -38,6 +40,9 @@ module peripheral_block(input logic			clk,
 		end else if(arb_ctrl == 2'b01) begin
 			data_rvalid = ram_rvalid;
 			data_rdata = ram_rdata;
+		end else if(arb_ctrl == 2'b11) begin
+			data_rvalid = timer32_rvalid;
+			data_rdata = timer32_rdata;
 		end else begin
 			data_rvalid = 1'b0;
 			data_rdata = 32'h00000000;
@@ -75,6 +80,20 @@ module peripheral_block(input logic			clk,
 			  .wdata					(data_wdata[31:0]),
 			  .req						(data_req));
 
+	timer32 u_timer32(/*AUTOINST*/
+					  // Outputs
+					  .data_gnt			(timer32_gnt),
+					  .data_rvalid		(timer32_rvalid),
+					  .data_rdata		(timer32_rdata[31:0]),
+					  // Inputs
+					  .clk				(clk),
+					  .rst				(rst),
+					  .data_req			(data_req),
+					  .data_we			(data_we),
+					  .data_be			(data_be[3:0]),
+					  .data_addr		(data_addr[31:0]),
+					  .data_wdata		(data_wdata[31:0]));
+	
 	assign data_err = 1'b0;
 	
 endmodule // peripheral_block
