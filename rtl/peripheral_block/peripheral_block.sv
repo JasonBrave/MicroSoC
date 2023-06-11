@@ -15,18 +15,26 @@ module peripheral_block(input logic			clk,
 	logic gpio_gnt, ram_gnt, timer32_gnt;
 	logic gpio_rvalid, ram_rvalid, timer32_rvalid;
 	logic [31:0] gpio_rdata, ram_rdata, timer32_rdata;
-	logic [1:0]	 arb_ctrl;
+
+	typedef enum logic [2:0] {
+							  DEV_NONE,
+							  DEV_GPIO,
+							  DEV_RAM,
+							  DEV_TIMER32,
+							  DEV_SIMPLE_INT_CTRL
+							  }peripheral_t;
+	peripheral_t	 arb_ctrl;
 
 	always_ff @(posedge clk) begin
 		if(rst == 1'b0) begin
-			arb_ctrl <= 2'b00;
+			arb_ctrl <= DEV_NONE;
 		end else begin
 			if(gpio_gnt == 1'b1) begin
-				arb_ctrl <= 2'b10;
+				arb_ctrl <= DEV_GPIO;
 			end else if(ram_gnt == 1'b1) begin
-				arb_ctrl <= 2'b01;
+				arb_ctrl <= DEV_RAM;
 			end else if(timer32_gnt == 1'b1) begin
-				arb_ctrl <= 2'b11;
+				arb_ctrl <= DEV_TIMER32;
 			end
 		end
 	end	
@@ -34,13 +42,13 @@ module peripheral_block(input logic			clk,
 	always_comb begin
 		data_gnt = gpio_gnt | ram_gnt | timer32_gnt;
 		
-		if(arb_ctrl == 2'b10) begin
+		if(arb_ctrl == DEV_GPIO) begin
 			data_rvalid = gpio_rvalid;
 			data_rdata = gpio_rdata;
-		end else if(arb_ctrl == 2'b01) begin
+		end else if(arb_ctrl == DEV_RAM) begin
 			data_rvalid = ram_rvalid;
 			data_rdata = ram_rdata;
-		end else if(arb_ctrl == 2'b11) begin
+		end else if(arb_ctrl == DEV_TIMER32) begin
 			data_rvalid = timer32_rvalid;
 			data_rdata = timer32_rdata;
 		end else begin
