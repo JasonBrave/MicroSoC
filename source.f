@@ -8,4 +8,5 @@ rtl/peripheral_block/peripheral_block.sv
 rtl/peripheral_block/gpio_controller.sv
 rtl/peripheral_block/ram.sv
 rtl/peripheral_block/timer32.sv
+rtl/peripheral_block/intr_controller.sv
 rtl/peripheral_block/uart_controller.sv
