@@ -16,8 +16,9 @@ module uart_controller(
 					   );
 
 	// clocks
-	logic		tx_clk, rx_sample_clk;
-	
+	logic		tx_clk, rx_clk;
+
+	// TX register block
 	// control registers
 	logic		tx_parity_enable, tx_start;
 	logic [7:0]	tx_buf;
@@ -25,15 +26,20 @@ module uart_controller(
 	
 	// status registers
 	logic		tx_busy;
+
+	// RX register block
+	logic		rx_parity_enable;
+	logic [7:0]	rx_buf;
+	logic		rx_received;
 	
 	// internal
-	logic		tx_parity;
+	logic		tx_parity, rx_parity;
 	logic		gnt_next;
 	logic		decode;
 	logic		rvalid_next;
 
 	assign tx_clk = uart_clk;
-	assign rx_sample_clk = uart_clk;
+	assign rx_clk = uart_clk;
 	
 	typedef enum logic [3:0] 
 	  {
@@ -53,6 +59,23 @@ module uart_controller(
 	
 	tx_state_t tx_state, tx_next_state;
 
+	typedef enum logic [3:0]
+	  {
+	   RX_IDLE,
+	   RX_D1,
+	   RX_D2,
+	   RX_D3,
+	   RX_D4,
+	   RX_D5,
+	   RX_D6,
+	   RX_D7,
+	   RX_D8,
+	   RX_PARITY,
+	   RX_STOP
+	   } rx_state_t;
+	rx_state_t rx_state, rx_next_state;
+
+	// TX State Register
 	always_ff @(posedge tx_clk) begin
 		if(rst == 1'b0) begin
 			tx_state <= TX_IDLE;
@@ -62,6 +85,7 @@ module uart_controller(
 		end
 	end
 
+	// TX Output Decoder
 	always_comb begin
 		tx_busy = 1'b1;
 		case(tx_state)
@@ -108,6 +132,7 @@ module uart_controller(
 		endcase
 	end
 
+	// TX State Transition
 	always_comb begin
 		tx_next_state = TX_IDLE;
 		case(tx_state)
@@ -162,6 +187,49 @@ module uart_controller(
 		
 	end
 
+	// RX state register
+	always_ff @(posedge rx_clk) begin
+		if(rst == 1'b0) begin
+			rx_state <= RX_IDLE;
+			rx_parity <= 1'b0;
+		end else begin
+			rx_state <= rx_next_state;
+		end
+	end
+
+	// RX state transition
+	always_comb begin
+		case(rx_state)
+			RX_IDLE: begin
+				if(rx == 1'b0) begin
+					rx_next_state = RX_D1;
+				end else begin
+					rx_next_state = RX_IDLE;
+				end
+			end
+			RX_D1: rx_next_state = RX_D2;
+			RX_D2: rx_next_state = RX_D3;
+			RX_D3: rx_next_state = RX_D4;
+			RX_D4: rx_next_state = RX_D5;
+			RX_D5: rx_next_state = RX_D6;
+			RX_D6: rx_next_state = RX_D7;
+			RX_D7: rx_next_state = RX_D8;
+			RX_D8: rx_next_state = RX_STOP;
+			default: rx_next_state = RX_IDLE;
+		endcase // case (rx_state)
+	end
+	
+	// RX buffer register
+	always_ff @(posedge rx_clk) begin
+		if(rst == 1'b0) begin
+			rx_buf <= 8'h00;
+		end else begin
+			if((rx_state == RX_D1) || (rx_state == RX_D2) || (rx_state == RX_D3) || (rx_state == RX_D4) || (rx_state == RX_D5) || (rx_state == RX_D6) || (rx_state == RX_D7) || (rx_state == RX_D8)) begin
+				rx_buf <= {rx, rx_buf[7:1]};
+			end
+		end
+	end
+	
 	// address decoder
 	always_comb begin
 		decode = (data_addr[31:12] == 20'h00023);
