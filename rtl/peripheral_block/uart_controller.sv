@@ -30,7 +30,9 @@ module uart_controller(
 	// RX register block
 	logic		rx_parity_enable;
 	logic [7:0]	rx_buf;
-	logic		rx_received;
+	logic		rx_received, rx_received_clear;
+	logic		rx_invalid_parity_detected, rx_invalid_parity_clear;
+	logic		rx_discard_policy;
 	
 	// internal
 	logic		tx_parity, rx_parity;
@@ -71,7 +73,8 @@ module uart_controller(
 	   RX_D7,
 	   RX_D8,
 	   RX_PARITY,
-	   RX_STOP
+	   RX_STOP,
+	   RX_PARITY_INVALID
 	   } rx_state_t;
 	rx_state_t rx_state, rx_next_state;
 
@@ -79,7 +82,6 @@ module uart_controller(
 	always_ff @(posedge tx_clk) begin
 		if(rst == 1'b0) begin
 			tx_state <= TX_IDLE;
-			tx_parity <= 1'b0;
 		end else begin
 			tx_state <= tx_next_state;
 		end
@@ -191,7 +193,6 @@ module uart_controller(
 	always_ff @(posedge rx_clk) begin
 		if(rst == 1'b0) begin
 			rx_state <= RX_IDLE;
-			rx_parity <= 1'b0;
 		end else begin
 			rx_state <= rx_next_state;
 		end
@@ -214,7 +215,23 @@ module uart_controller(
 			RX_D5: rx_next_state = RX_D6;
 			RX_D6: rx_next_state = RX_D7;
 			RX_D7: rx_next_state = RX_D8;
-			RX_D8: rx_next_state = RX_STOP;
+			RX_D8: begin
+				if(rx_parity_enable == 1'b1) begin
+					rx_next_state = RX_PARITY;
+				end else begin
+					rx_next_state = RX_STOP;
+				end
+			end
+			RX_PARITY: begin
+				if(rx == rx_parity) begin
+					rx_next_state = RX_STOP;
+				end else begin
+					rx_next_state = RX_PARITY_INVALID;
+				end
+			end
+			RX_PARITY_INVALID: begin
+				rx_next_state = RX_STOP;
+			end
 			default: rx_next_state = RX_IDLE;
 		endcase // case (rx_state)
 	end
@@ -229,6 +246,27 @@ module uart_controller(
 			end
 		end
 	end
+
+	// RX received and invalid parity register
+	always_ff @(posedge rx_clk) begin
+		if((rst == 1'b0) || (rx_received_clear == 1'b1)) begin
+			rx_received <= 1'b0;
+		end else if(rx_state == RX_STOP) begin
+			rx_received <= 1'b1;
+		end
+
+		if((rst == 1'b0) || (rx_invalid_parity_clear == 1'b1)) begin
+			rx_invalid_parity_detected <= 1'b0;
+		end else if(rx_state == RX_STOP) begin
+			rx_invalid_parity_detected <= 1'b1;
+		end
+	end
+
+	// parity generation
+	always_comb begin
+		tx_parity = ^tx_buf;
+		rx_parity = ^rx_buf;
+	end
 	
 	// address decoder
 	always_comb begin
@@ -240,10 +278,15 @@ module uart_controller(
 	// registers
 	always_ff @(posedge clk) begin
 		tx_start <= 1'b0;
+		rx_received_clear <= 1'b0;
+		rx_invalid_parity_clear <= 1'b0;
+		
 		if(rst == 1'b0) begin
 			data_rdata <= 32'h00000000;
 			data_gnt <= 1'b0;
 			data_rvalid <= 1'b0;
+			tx_parity_enable <= 1'b0;
+			rx_discard_policy <= 1'b0;
 		end else begin
 			data_gnt <= gnt_next;
 			data_rvalid <= rvalid_next;
@@ -251,12 +294,12 @@ module uart_controller(
 			if(data_req && decode) begin
 				if(data_we) begin
 					case(data_addr[11:2])
-						0: begin
+						0: begin // TX buffer
 							if(data_be[0]) begin
 								tx_buf <= data_wdata[7:0];
 							end
 						end
-						1: begin
+						1: begin // TX control
 							if(data_be[0]) begin
 								tx_parity_enable <= data_wdata[1];
 								tx_start <= data_wdata[0];
@@ -264,6 +307,15 @@ module uart_controller(
 						end
 						// 2 for baud rate control
 						// 3 read only status
+						4: begin // RX control & status
+							if(data_be[0]) begin
+								rx_received_clear <= data_wdata[0];
+								rx_discard_policy <= data_wdata[1];
+								rx_parity_enable <= data_wdata[2];
+								rx_invalid_parity_clear <= data_wdata[3];
+							end
+						end
+						// 5 read only RX buffer
 					endcase // case (data_addr[11:2])
 				end else begin // if (data_we)
 					case(data_addr[11:2])
@@ -278,6 +330,12 @@ module uart_controller(
 						end
 						3: begin
 							data_rdata <= {31'h0, tx_busy};
+						end
+						4: begin
+							data_rdata <= {28'h0, rx_invalid_parity_detected, rx_parity_enable, rx_discard_policy, rx_received};
+						end
+						5: begin
+							data_rdata <= {24'h0, rx_buf};
 						end
 					endcase // case (data_addr[11:2])
 				end // else: !if(data_we)
