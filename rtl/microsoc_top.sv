@@ -1,7 +1,9 @@
 module microsoc_top(input logic			clk,
 					input logic			rst,
 					output logic [17:0]	gpio_out,
-					input logic [11:0]	gpio_in
+					input logic [11:0]	gpio_in,
+					input logic			uart_rx,
+					output logic		uart_tx
 					/*AUTOARG*/);
 
 	logic						  data_req;
@@ -37,6 +39,7 @@ module microsoc_top(input logic			clk,
 										.data_rdata		(data_rdata[31:0]),
 										.data_err		(data_err),
 										.gpio_out		(gpio_out[17:0]),
+										.uart_tx (uart_tx),
 										// Inputs
 										.clk			(clk),
 										.rst			(rst),
@@ -45,7 +48,8 @@ module microsoc_top(input logic			clk,
 										.data_be		(data_be[3:0]),
 										.data_addr		(data_addr[31:0]),
 										.data_wdata		(data_wdata[31:0]),
-										.gpio_in		(gpio_in[11:0]));
+										.gpio_in		(gpio_in[11:0]),
+										.uart_rx(uart_rx));
 	
 	initial begin
 		$dumpfile("wave.vcd");
