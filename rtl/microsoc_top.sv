@@ -1,7 +1,8 @@
 module microsoc_top(input logic			clk,
 					input logic			rst,
-					output logic [17:0]	gpio_out,
-					input logic [11:0]	gpio_in,
+					output logic [63:0]	gpio_out,
+					input logic [63:0]	gpio_in,
+					input logic			uart_clk,
 					input logic			uart_rx,
 					output logic		uart_tx
 					/*AUTOARG*/);
@@ -38,7 +39,7 @@ module microsoc_top(input logic			clk,
 										.data_rvalid	(data_rvalid),
 										.data_rdata		(data_rdata[31:0]),
 										.data_err		(data_err),
-										.gpio_out		(gpio_out[17:0]),
+										.gpio_out		(gpio_out[63:0]),
 										.uart_tx (uart_tx),
 										// Inputs
 										.clk			(clk),
@@ -48,7 +49,8 @@ module microsoc_top(input logic			clk,
 										.data_be		(data_be[3:0]),
 										.data_addr		(data_addr[31:0]),
 										.data_wdata		(data_wdata[31:0]),
-										.gpio_in		(gpio_in[11:0]),
+										.gpio_in		(gpio_in[63:0]),
+										.uart_clk(uart_clk),
 										.uart_rx(uart_rx));
 	
 	initial begin

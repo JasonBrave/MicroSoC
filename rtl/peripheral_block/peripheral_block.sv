@@ -9,10 +9,11 @@ module peripheral_block(input logic			clk,
 						output logic		data_rvalid,
 						output logic [31:0]	data_rdata,
 						output logic		data_err,
-						output logic [17:0]	gpio_out,
-						input logic [11:0]	gpio_in,
+						output logic [63:0]	gpio_out,
+						input logic [63:0]	gpio_in,
 						output logic [15:0]	intr_id,
 						output logic		intr_signal,
+						input logic			uart_clk,
 						input logic			uart_rx,
 						output logic		uart_tx);
 
@@ -81,7 +82,7 @@ module peripheral_block(input logic			clk,
 									  .data_gnt			(gpio_gnt),
 									  .data_rvalid		(gpio_rvalid),
 									  .data_rdata		(gpio_rdata[31:0]),
-									  .gpio_out			(gpio_out[17:0]),
+									  .gpio_out			(gpio_out[63:0]),
 									  .irq (irq_source[1]),
 									  // Inputs
 									  .clk				(clk),
@@ -91,7 +92,7 @@ module peripheral_block(input logic			clk,
 									  .data_be			(data_be[3:0]),
 									  .data_addr		(data_addr[31:0]),
 									  .data_wdata		(data_wdata[31:0]),
-									  .gpio_in			(gpio_in[11:0]));
+									  .gpio_in			(gpio_in[63:0]));
 	
 	ram u_ram(/*AUTOINST*/
 			  // Outputs
@@ -148,7 +149,7 @@ module peripheral_block(input logic			clk,
 									  .irq (irq_source[2]),
 									  // Inputs
 									  .clk				(clk),
-									  .uart_clk (clk),
+									  .uart_clk (uart_clk),
 									  .rst				(rst),
 									  .data_req			(data_req),
 									  .data_we			(data_we),

@@ -5,7 +5,7 @@ VERILATOR = verilator
 all: obj_dir/Vmicrosoc_top
 
 obj_dir/Vmicrosoc_top:
-	$(VERILATOR) -Wall -Wno-TIMESCALEMOD -Wno-DECLFILENAME --cc --exe --clk clk --top microsoc_top --trace --build $(VERILATOR_ARGS) $(TB_SRC) -f source.f
+	$(VERILATOR) -Wall -Wno-TIMESCALEMOD -Wno-DECLFILENAME --cc --exe --top microsoc_top --trace --build $(VERILATOR_ARGS) $(TB_SRC) -f source.f
 
 sim: obj_dir/Vmicrosoc_top
 	./obj_dir/Vmicrosoc_top
