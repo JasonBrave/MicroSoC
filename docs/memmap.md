@@ -27,28 +27,38 @@
 | 0x30   | GPIO\_NEGEDGE\_STAT0 | [31:0]    | RC  | GPIO Pin 0-31 Falling Edge detected          | 12       |
 | 0x34   | GPIO\_NEDEDGE\_STAT1 | [31:0]    | RC  | GPIO Pin 32-63 Falling Edge detected         | 13       |
 
+# Timer register map
+| Offset | Name               | Bit Field | R/W | Description                              | Internal |
+|--------|--------------------|-----------|-----|------------------------------------------|----------|
+| 0x0    | COUNTER            | [31:0]    | R   | Counter                                  | 0        |
+| 0x4    | RESET              | [0]       | W   | Write to reset counter to 0              | 1        |
+| 0x8    | TIMEOUT\_THRESHOLD | [31:0]    | RW  | Minimum counter value to issue interrupt | 2        |
+| 0xC    | TIMEOUT\_CSR       | [1:0]     | RW  | Timeout control and status               | 3        |
+|        | TIMEOUT\_ENABLE    | [0]       | RW  | Enable timeout                           |          |
+|        | TIMEOUT\_OCCURED   | [1]       | RC  | Timeout occured                          |          |
+
 # Interrupt controller register map
 
-| Offset | Name        | Bit Field | Description                      |
-|--------|-------------|-----------|----------------------------------|
-| 0x0    | INTR\_EN0   | [31:0]    | Interrupt enable bits 0-31       |
-| 0x4    | INTR\_EN1   | [31:0]    | Interrupt enable bits 32-63      |
-| 0x8    | INTR\_EN2   | [31:0]    | Interrupt enable bits 64-95      |
-| 0xC    | INTR\_EN3   | [31:0]    | Interrupt enable bits 96-127     |
-| 0x10   | INTR\_EN4   | [31:0]    |                                  |
-| 0x14   | INTR\_EN5   | [31:0]    |                                  |
-| 0x18   | INTR\_EN6   | [31:0]    |                                  |
-| 0x1C   | INTR\_EN7   | [31:0]    |                                  |
-| 0x20   | INTR\_PEND0 | [31:0]    | Interrupt pending bits 0-31      |
-| 0x24   | INTR\_PEND1 | [31:0]    | Interrupt pending bits 32-63     |
-| 0x28   | INTR\_PEND2 | [31:0]    | Interrupt pending bits 64-95     |
-| 0x2C   | INTR\_PEND3 | [31:0]    | Interrupt pending bits 96-127    |
-| 0x30   | INTR\_PEND4 | [31:0]    |                                  |
-| 0x34   | INTR\_PEND5 | [31:0]    |                                  |
-| 0x38   | INTR\_PEND6 | [31:0]    |                                  |
-| 0x3C   | INTR\_PEND7 | [31:0]    |                                  |
-| 0x40   | INTR\_ID0   | [15:0]    | Processor Interrupt ID for IRQ 0 |
-|        |             | [31:16]   | Processor Interrupt ID for IRQ 1 |
+| Offset | Name        | Bit Field | R/W | Description                      | Internal |
+|--------|-------------|-----------|-----|----------------------------------|----------|
+| 0x0    | INTR\_EN0   | [31:0]    |     | Interrupt enable bits 0-31       | 0        |
+| 0x4    | INTR\_EN1   | [31:0]    |     | Interrupt enable bits 32-63      | 1        |
+| 0x8    | INTR\_EN2   | [31:0]    |     | Interrupt enable bits 64-95      | 2        |
+| 0xC    | INTR\_EN3   | [31:0]    |     | Interrupt enable bits 96-127     | 3        |
+| 0x10   | INTR\_EN4   | [31:0]    |     |                                  | 4        |
+| 0x14   | INTR\_EN5   | [31:0]    |     |                                  | 5        |
+| 0x18   | INTR\_EN6   | [31:0]    |     |                                  | 6        |
+| 0x1C   | INTR\_EN7   | [31:0]    |     |                                  | 7        |
+| 0x20   | INTR\_PEND0 | [31:0]    |     | Interrupt pending bits 0-31      | 8        |
+| 0x24   | INTR\_PEND1 | [31:0]    |     | Interrupt pending bits 32-63     | 9        |
+| 0x28   | INTR\_PEND2 | [31:0]    |     | Interrupt pending bits 64-95     | 10       |
+| 0x2C   | INTR\_PEND3 | [31:0]    |     | Interrupt pending bits 96-127    | 11       |
+| 0x30   | INTR\_PEND4 | [31:0]    |     |                                  | 12       |
+| 0x34   | INTR\_PEND5 | [31:0]    |     |                                  | 13       |
+| 0x38   | INTR\_PEND6 | [31:0]    |     |                                  | 14       |
+| 0x3C   | INTR\_PEND7 | [31:0]    |     |                                  | 15       |
+| 0x40   | INTR\_ID0   | [15:0]    |     | Processor Interrupt ID for IRQ 0 |          |
+|        |             | [31:16]   |     | Processor Interrupt ID for IRQ 1 |          |
 
 # UART controller register map
 | Offset | Name     | Bit Field | R/W | Description                   | Internal |
